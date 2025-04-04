@@ -14,7 +14,7 @@ function createWindow(): void {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '../preload/index.js'),
       webSecurity: true
     }
   });
@@ -28,10 +28,10 @@ function createWindow(): void {
       }
     });
   });
-console.log(process.env.NODE_ENV)
+  console.log(process.env.NODE_ENV)
   // 加载应用的index.html
   const startUrl = process.env.NODE_ENV === 'development' 
-    ? 'http://127.0.0.1:3000' 
+    ? 'http://localhost:5173/' 
     : url.format({
         pathname: path.join(__dirname, '../index.html'),
         protocol: 'file:',
