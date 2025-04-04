@@ -1,162 +1,25 @@
-import React, { useState, useEffect } from 'react';
-// 类型声明已经在全局范围内可用，不需要导入
-
-interface Server {
-  id: number;
-  name: string;
-  status: string;
-  path: string;
-}
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Layout from './components/layout';
+import MCPServers from './pages/MCPServers';
+import MCPServerAgents from './pages/MCPServerAgents';
+import AgentDetail from './pages/AgentDetail';
+import CreateAgent from './pages/CreateAgent';
+import EditAgent from './pages/EditAgent';
+import './styles/app.css';
 
 const App: React.FC = () => {
-  const [servers, setServers] = useState<Server[]>([]);
-  const [selectedServer, setSelectedServer] = useState<Server | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  
-  const { ipcRenderer } = window.electron || {};
-
-  // 模拟加载服务器列表
-  useEffect(() => {
-    // 这里将来会从配置文件或其他来源加载真实的MCP服务器列表
-    const mockServers: Server[] = [
-      { id: 1, name: '示例服务器1', status: 'stopped', path: '/path/to/server1' },
-      { id: 2, name: '示例服务器2', status: 'running', path: '/path/to/server2' }
-    ];
-    
-    setServers(mockServers);
-  }, []);
-
-  // 处理服务器操作
-  const handleServerAction = (action: string, server: Server): void => {
-    if (!ipcRenderer) {
-      console.error('IPC Renderer not available');
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    // 发送操作到主进程
-    ipcRenderer.send('mcp-server-action', action, server);
-    
-    // 监听操作结果
-    ipcRenderer.once('mcp-server-action-reply', (success: boolean, data: any) => {
-      setIsLoading(false);
-      
-      if (success) {
-        // 更新服务器状态
-        if (action === 'start') {
-          updateServerStatus(server.id, 'running');
-        } else if (action === 'stop') {
-          updateServerStatus(server.id, 'stopped');
-        }
-      } else {
-        alert(`操作失败: ${data.message}`);
-      }
-    });
-  };
-
-  // 更新服务器状态
-  const updateServerStatus = (serverId: number, status: string): void => {
-    setServers(servers.map(server => 
-      server.id === serverId ? { ...server, status } : server
-    ));
-  };
-
-  // 选择服务器
-  const handleSelectServer = (server: Server): void => {
-    setSelectedServer(server);
-  };
-
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>MCP服务器管理工具</h1>
-      </header>
-      
-      <div className="main-content">
-        <div className="server-list">
-          <h2>服务器列表1</h2>
-          {servers.length === 0 ? (
-            <p>没有可用的服务器</p>
-          ) : (
-            <ul>
-              {servers.map(server => (
-                <li 
-                  key={server.id} 
-                  className={`server-item ${selectedServer?.id === server.id ? 'selected' : ''}`}
-                  onClick={() => handleSelectServer(server)}
-                >
-                  <div className="server-name">{server.name}</div>
-                  <div className={`server-status ${server.status}`}>
-                    {server.status === 'running' ? '运行中' : '已停止'}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-          
-          <div className="server-actions">
-            <button className="add-server-btn">添加服务器</button>
-          </div>
-        </div>
-        
-        {selectedServer && (
-          <div className="server-details">
-            <h2>服务器详情</h2>
-            <div className="detail-item">
-              <span className="label">名称:</span>
-              <span>{selectedServer.name}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">路径:</span>
-              <span>{selectedServer.path}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">状态:</span>
-              <span className={selectedServer.status}>
-                {selectedServer.status === 'running' ? '运行中' : '已停止'}
-              </span>
-            </div>
-            
-            <div className="server-controls">
-              {selectedServer.status === 'stopped' ? (
-                <button 
-                  className="control-btn start"
-                  onClick={() => handleServerAction('start', selectedServer)}
-                  disabled={isLoading}
-                >
-                  启动服务器
-                </button>
-              ) : (
-                <button 
-                  className="control-btn stop"
-                  onClick={() => handleServerAction('stop', selectedServer)}
-                  disabled={isLoading}
-                >
-                  停止服务器
-                </button>
-              )}
-              <button 
-                className="control-btn edit"
-                onClick={() => handleServerAction('edit', selectedServer)}
-                disabled={isLoading}
-              >
-                编辑配置
-              </button>
-              <button 
-                className="control-btn delete"
-                onClick={() => handleServerAction('delete', selectedServer)}
-                disabled={isLoading}
-              >
-                删除服务器
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-      
-      {isLoading && <div className="loading-overlay">处理中...</div>}
-    </div>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<MCPServers />} />
+        <Route path="/servers" element={<MCPServers />} />
+        <Route path="/agents" element={<MCPServerAgents />} />
+        <Route path="/agents/:id" element={<AgentDetail />} />
+        <Route path="/agents/create" element={<CreateAgent />} />
+        <Route path="/agents/:id/edit" element={<EditAgent />} />
+      </Routes>
+    </Layout>
   );
 };
 

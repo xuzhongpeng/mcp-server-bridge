@@ -1,0 +1,61 @@
+.create-agent-page {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.create-agent-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.endpoint-input {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.endpoint-input input {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.endpoint-list {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 8px;
+  min-height: 100px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.endpoint-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.endpoint-item:last-child {
+  border-bottom: none;
+}
+
+.no-endpoints {
+  color: #999;
+  text-align: center;
+  padding: 16px;
+}
+
+.submit-button {
+  width: 120px;
+}
