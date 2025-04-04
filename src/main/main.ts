@@ -1,12 +1,12 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const url = require('url');
+import { app, BrowserWindow, ipcMain, IpcMainEvent, WebContents } from 'electron';
+import * as path from 'path';
+import * as url from 'url';
 
 // 保持对window对象的全局引用，如果不这样做，
 // 当JavaScript对象被垃圾回收时，window对象将自动关闭
-let mainWindow;
+let mainWindow: BrowserWindow | null;
 
-function createWindow() {
+function createWindow(): void {
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
     width: 1024,
@@ -28,11 +28,12 @@ function createWindow() {
       }
     });
   });
+console.log(process.env.NODE_ENV)
   // 加载应用的index.html
   const startUrl = process.env.NODE_ENV === 'development' 
     ? 'http://127.0.0.1:3000' 
     : url.format({
-        pathname: path.join(__dirname, '../build/index.html'),
+        pathname: path.join(__dirname, '../index.html'),
         protocol: 'file:',
         slashes: true
       });
@@ -73,7 +74,14 @@ app.on('activate', function () {
 // 也可以拆分成几个文件，然后用require导入。
 
 // MCP服务器管理相关的IPC通信处理
-ipcMain.on('mcp-server-action', (event, action, data) => {
+interface ServerData {
+  id: number;
+  name: string;
+  status: string;
+  path: string;
+}
+
+ipcMain.on('mcp-server-action', (event: IpcMainEvent, action: string, data: ServerData) => {
   console.log('收到MCP服务器操作:', action, data);
   // 这里将来添加MCP服务器管理的逻辑
 });

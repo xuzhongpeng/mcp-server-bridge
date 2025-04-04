@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
-const { ipcRenderer } = window.electron || {};
+// 类型声明已经在全局范围内可用，不需要导入
 
-function App() {
-  const [servers, setServers] = useState([]);
-  const [selectedServer, setSelectedServer] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+interface Server {
+  id: number;
+  name: string;
+  status: string;
+  path: string;
+}
+
+const App: React.FC = () => {
+  const [servers, setServers] = useState<Server[]>([]);
+  const [selectedServer, setSelectedServer] = useState<Server | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  const { ipcRenderer } = window.electron || {};
 
   // 模拟加载服务器列表
   useEffect(() => {
     // 这里将来会从配置文件或其他来源加载真实的MCP服务器列表
-    const mockServers = [
+    const mockServers: Server[] = [
       { id: 1, name: '示例服务器1', status: 'stopped', path: '/path/to/server1' },
       { id: 2, name: '示例服务器2', status: 'running', path: '/path/to/server2' }
     ];
@@ -18,14 +27,19 @@ function App() {
   }, []);
 
   // 处理服务器操作
-  const handleServerAction = (action, server) => {
+  const handleServerAction = (action: string, server: Server): void => {
+    if (!ipcRenderer) {
+      console.error('IPC Renderer not available');
+      return;
+    }
+    
     setIsLoading(true);
     
     // 发送操作到主进程
     ipcRenderer.send('mcp-server-action', action, server);
     
     // 监听操作结果
-    ipcRenderer.once('mcp-server-action-reply', (event, success, data) => {
+    ipcRenderer.once('mcp-server-action-reply', (success: boolean, data: any) => {
       setIsLoading(false);
       
       if (success) {
@@ -42,14 +56,14 @@ function App() {
   };
 
   // 更新服务器状态
-  const updateServerStatus = (serverId, status) => {
+  const updateServerStatus = (serverId: number, status: string): void => {
     setServers(servers.map(server => 
       server.id === serverId ? { ...server, status } : server
     ));
   };
 
   // 选择服务器
-  const handleSelectServer = (server) => {
+  const handleSelectServer = (server: Server): void => {
     setSelectedServer(server);
   };
 
@@ -61,7 +75,7 @@ function App() {
       
       <div className="main-content">
         <div className="server-list">
-          <h2>服务器列表</h2>
+          <h2>服务器列表1</h2>
           {servers.length === 0 ? (
             <p>没有可用的服务器</p>
           ) : (
@@ -144,6 +158,6 @@ function App() {
       {isLoading && <div className="loading-overlay">处理中...</div>}
     </div>
   );
-}
+};
 
 export default App;
