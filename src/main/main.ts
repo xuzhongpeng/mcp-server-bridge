@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent, WebContents } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { mcpHost } from './mcpHost';
 
 // 保持对window对象的全局引用，如果不这样做，
 // 当JavaScript对象被垃圾回收时，window对象将自动关闭

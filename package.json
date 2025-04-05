@@ -4,10 +4,14 @@
   "description": "MCP服务器管理工具",
   "main": "dist/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
+    "start": "electron-vite dev",
     "build": "electron-vite build && electron-builder",
     "preview": "electron-vite preview",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:mcpHost": "jest src/main/mcpHost/__tests__"
   },
   "keywords": [
     "electron",
@@ -43,6 +47,7 @@
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -56,7 +61,9 @@
     "electron-builder": "^26.0.0",
     "electron-vite": "^3.1.0",
     "html-webpack-plugin": "^5.6.0",
+    "jest": "^29.7.0",
     "style-loader": "^3.3.4",
+    "ts-jest": "^29.3.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "vite": "^6.2.5",
