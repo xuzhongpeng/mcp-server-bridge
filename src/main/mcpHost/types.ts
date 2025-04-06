@@ -3,7 +3,7 @@ export interface MCPServer {
   id: string;
   name: string;
   url: string;
-  mode: "stdio" | "sse";
+  transportType: "stdio" | "sse";
   status: "online" | "offline";
   description?: string;
   createdAt: string;
@@ -30,11 +30,7 @@ export interface MCPServerConfig {
 }
 
 // MCP服务器配置项类型
-export interface MCPServerConfigItem {
-  command: string;
-  args: string[];
-  env?: Record<string, string>;
-  transportType: "stdio" | "sse";
+export interface MCPServerConfigItem extends MCPServer{
   disabled?: boolean;
   autoApprove?: string[];
 }

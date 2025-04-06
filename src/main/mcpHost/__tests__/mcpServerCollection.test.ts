@@ -1,8 +1,8 @@
 import { MCPServerCollectionManager } from '../mcpServerCollection';
 import { MCPServerManager } from '../mcpServerManager';
-import fs from 'fs';
+import * as fs from 'fs';
 import { app } from 'electron';
-import http from 'http';
+import * as http from 'http';
 
 // 模拟模块
 jest.mock('fs');

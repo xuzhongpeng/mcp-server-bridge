@@ -42,7 +42,7 @@ export class MCPServerManager {
             id,
             name: id, // 使用ID作为默认名称
             url: "", // 根据实际情况设置URL
-            mode: serverConfig.transportType, // 根据环境变量设置模式
+            transportType: serverConfig.transportType, // 根据环境变量设置模式
             status: "offline",
             command: serverConfig.command,
             args: serverConfig.args,
@@ -70,14 +70,17 @@ export class MCPServerManager {
       // 将服务器对象转换为配置
       this.servers.forEach((server, id) => {
         if (server.command) {
-          const env = server.env || {};
-
           config.mcpServers[id] = {
+            id: server.id,
+            url: server.url,
+            name: server.name,
+            status: server.status,
+            createdAt: server.createdAt,
             command: server.command,
             args: server.args || [],
-            env: env,
+            env: server.env,
             disabled: server.status === "offline",
-            transportType: server.mode,
+            transportType: server.transportType,
             autoApprove: [],
           };
         }
@@ -168,7 +171,7 @@ export class MCPServerManager {
     try {
       // 对于sse模式，可能需要特殊处理
       let actuator: MCPActuator;
-      if (server.mode === "sse") {
+      if (server.transportType === "sse") {
         console.log(`[MCP Server ${id}] 以SSE模式启动`);
         actuator = new StdioActuator(server);
       } else {
@@ -245,13 +248,11 @@ export class MCPServerManager {
       // 导入新服务器
       Object.entries(config.mcpServers).forEach(([id, serverConfig]) => {
         // 检查环境变量中是否有指定的传输模式
-        let mode: "stdio" | "sse" = "stdio"; // 默认为stdio模式
-
         const server: MCPServer = {
           id,
-          name: id,
-          url: "",
-          mode: mode,
+          name: serverConfig.name,
+          url: serverConfig.url,
+          transportType: serverConfig.transportType,
           status: "offline",
           command: serverConfig.command,
           args: serverConfig.args,
@@ -294,12 +295,17 @@ export class MCPServerManager {
 
     this.servers.forEach((server, id) => {
       if (server.command) {
-        config.mcpServers[id] = {
+        config.mcpServers[id] ={
+          id: server.id,
+          url: server.url,
+          name: server.name,
+          status: server.status,
+          createdAt: server.createdAt,
           command: server.command,
           args: server.args || [],
           env: server.env,
-          transportType: server.mode,
           disabled: server.status === "offline",
+          transportType: server.transportType,
           autoApprove: [],
         };
       }
